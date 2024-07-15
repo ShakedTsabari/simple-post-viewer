@@ -1,0 +1,199 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: sans-serif;
+    
+}
+
+h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.note-light {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    padding: 20px;
+    background-color: rgb(244, 232, 128);
+}
+
+.note-dark {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    padding: 20px;
+    background-color: rgb(19, 11, 1);
+    color: white;
+}
+
+
+
+p {
+    font-size: 15px;
+}
+
+
+.note-list-light {
+    background-color: #fef8db;
+}
+
+.note-list-dark {
+    background-color: #525150;
+}
+
+
+
+.pagination-light {
+    color: black;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-light button {
+    margin: 0 4px;
+    background-color: rgb(244, 232, 128);
+    border-radius: 5px;
+    padding: 0px 10px;
+    border: 2px solid rgb(244, 232, 128);
+}
+
+.pagination-light button.active {
+    font-weight: bold;
+}
+
+
+.pagination-dark {
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-dark button {
+    margin: 0 4px;
+    background-color: black;
+    border-radius: 5px;
+    padding: 0px 10px;
+    border: 2px solid black;
+}
+
+.pagination-dark button.active {
+    font-weight: bold;
+}
+
+
+
+input{
+    display: block;
+    width: 200px; 
+    margin: 20px auto; 
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+
+}
+
+
+
+input[type="text"] {
+    color: black;
+    margin: 10px 10px;
+
+}
+
+.addNote {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.text_input_save_new_note,
+.text_input_cancel_new_note,
+.add_new_note {
+    margin: 0 4px;
+    background-color: rgb(4, 190, 4);
+    border-radius: 5px;
+    padding: 0px 10px;
+    border: 2px solid rgb(4, 190, 4);
+}
+
+
+.note-light button {
+    background-color: #fef8db;
+    margin: 4px;
+    padding: 5px 10px;
+    width: fit-content;
+    align-self: center;
+    border-radius: 5px;
+
+}
+
+.note-dark button {
+    background-color: rgb(139, 138, 138);
+    margin: 4px;
+    padding: 5px 10px;
+    width: fit-content;
+    align-self: center;
+    border-radius: 5px;
+
+}
+
+.note-list-dark .toggle {
+    padding: 5px 10px;
+    color: white;
+    font-weight: bold;
+    background-color: black;
+    width: fit-content;
+    border-radius: 5px;
+    border: 2px solid white;
+
+}
+
+.note-list-light .toggle {
+    padding: 5px 10px;
+    color: black;
+    font-weight: bold;
+    background-color: white;
+    width: fit-content;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+
+
+.text_input_save_new_note,
+.text_input_cancel_new_note,
+.add_new_note
+ {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.edit_buttons,
+.save_cancel_buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
