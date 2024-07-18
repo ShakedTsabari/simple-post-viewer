@@ -1,13 +1,14 @@
 import React from 'react';
 import "../styles/style.css";
 import NoteList from '../components/NoteList';
-import type { InferGetStaticPropsType, GetStaticProps } from 'next'
+import Link from 'next/link';
 
 
 export default function App({notes, user}:{notes: any, user: any}) {
   return (
     <div className="App">
       <NoteList posts={notes} user={user}/>
+      <Link href="/login">Login</Link>
     </div>
   );
 }
