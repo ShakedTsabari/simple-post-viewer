@@ -7,8 +7,8 @@ import Link from 'next/link';
 export default function App({notes, user}:{notes: any, user: any}) {
   return (
     <div className="App">
+      <Link href="/homepage">home</Link>
       <NoteList posts={notes} user={user}/>
-      <Link href="/login">Login</Link>
     </div>
   );
 }
@@ -16,13 +16,12 @@ export default function App({notes, user}:{notes: any, user: any}) {
 export async function getStaticProps() {
   const res = await fetch('http://localhost:3001/notes');
   const notes = await res.json();
-  const user = {name: 'Author 2'};
+  const user = {name: 'Author 1'};
   return {
     props: {
       notes,
       user
     },
-  };
-  
+  };  
 }
 

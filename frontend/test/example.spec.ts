@@ -6,11 +6,11 @@ import { test, expect } from '@playwright/test';
 //     await expect(page.locator('.note')).not.toBeNull();
 // })
 
-test('navigate to the login page', async ({ page }) => {
+test('navigate to the home page', async ({ page }) => {
     await page.goto('http://localhost:3000/')
-    await page.click('text=login')
-    await expect(page).toHaveURL('http://localhost:3000/login')
-    await expect(page.locator('h1')).toContainText('Login')
+    await page.click('text=home')
+    await expect(page).toHaveURL('http://localhost:3000/homepage')
+    await expect(page.locator('h1')).toContainText('home')
   })
 
 test('add a new note', async ({ page }) => {
