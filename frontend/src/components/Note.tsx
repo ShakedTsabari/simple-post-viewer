@@ -37,6 +37,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
                 <h2>{title}</h2>
                 <small>By {author}</small>
                 <br />
+                <p>{text}</p>
                 {user && user.name === author &&
                 (isEditing ? (<>
                                 <input 
@@ -51,7 +52,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
                                     </div>
                             </>) : 
                             (<div>
-                                <p>{text}</p>
+
                                 <div className="edit_buttons">
                                     <button name={'edit-'+id} onClick={() => setIsEditing(true)}>Edit</button>
                                     <button name={'delete-'+id} onClick={handleDeleteClick}>Delete</button>
