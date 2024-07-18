@@ -56,7 +56,7 @@ mongoose.connect(process.env.MONGODB_CONNECTION_URL)
             const skipIndex = (page - 1) * limit;
     
             const totalNotes = await Note.countDocuments();
-            const notes = await Note.find().skip(skipIndex).limit(limit);
+            const notes = await Note.find().sort({ id: 1 }).skip(skipIndex).limit(limit);
     
             res.status(200).json({
                 notes: notes,
@@ -71,7 +71,7 @@ mongoose.connect(process.env.MONGODB_CONNECTION_URL)
 app.get('/notes/:id', async (req, res) => {
     try {
         const id = parseInt(req.params.id);
-        const note = await Note.find().skip(id-1).limit(1);
+        const note = await Note.find().sort({ id: 1 }).skip(id-1).limit(1);
 
         if (note.length === 0)
             return res.status(404).json({ error: 'Note not found' });
