@@ -5,7 +5,7 @@ export default function Login() {
     <div>
       <div>
         <h1>Create User</h1>
-        <form name="create_user_form_name">
+        <form name="create_user_form">
           <label>Name</label>
           <input type="text" name="create_user_form_name" /><br />
           <label>Email</label>
@@ -29,7 +29,7 @@ export default function Login() {
         </div>
         <div>
           <h1>Logout</h1>
-          <button name="logout">Logout</button>
+          <button name="logout">Logout</button>  {/*The logout will delete the token from the state.*/}
 
         </div>
       </div>
