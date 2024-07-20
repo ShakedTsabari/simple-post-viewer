@@ -1,33 +1,19 @@
-export default function Homepage() {
+import { use, useContext } from "react"
+import Login from "./Login"
+import { UserContext } from "./NoteList"
+import Logout from "./Logout";
+import Signup from "./Signup";
+
+
+export default function Homepage({onLogin, onLogout, onSignup} : {onLogin: any, onLogout: any, onSignup: any}) {
+  const user = useContext(UserContext);
+
+
   return (
     <div className="homepage">
-      <div className="createUserContainer">
-        <h1>Create User</h1>
-        <form name="create_user_form">
-          <label>Name</label>
-          <input type="text" name="create_user_form_name" /><br />
-          <label>Email</label>
-          <input type="text" name="create_user_form_email" /><br />
-          <label>Username</label>
-          <input type="text" name="create_user_form_username"/><br />
-          <label>Password</label>
-          <input type="password" name="create_user_form_password" /><br />
-          <button name="create_user_form_create_user">Create User</button>
-        </form>
-      </div>
-      <div className="loginUserContainer">
-          <h1>Login</h1>
-          <form name="login_form">
-            <label>Username</label>
-            <input type="text" name="login_form_username" /><br />
-            <label>Password</label>
-            <input type="password" name="login_form_password" /><br />
-            <button name="login_form_login">Login</button>
-          </form>
-      </div>
-      <div className="logoutUserContainer">
-        <button name="logout">Logout</button>  {/*The logout will delete the token from the state.*/}
-      </div>
+      {!user && <Signup onSignup={onSignup}/>}
+      {!user &&  <Login onLogin={onLogin}/>}
+      {user && <Logout onLogout={onLogout}/>}
     </div>
   )
 }

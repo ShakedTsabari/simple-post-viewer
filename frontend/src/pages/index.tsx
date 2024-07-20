@@ -2,26 +2,23 @@ import React from 'react';
 import "../styles/style.css";
 import NoteList from '../components/NoteList';
 import Link from 'next/link';
-import Homepage from '../components/homepage';
 
 
-export default function App({notes, user}:{notes: any, user: any}) {
+
+export default function App({notes}:{notes: any}) {
   return (
     <div className="App">
-      <Homepage />
-      <NoteList posts={notes} user={user}/>
+      <NoteList posts={notes}/>
     </div>
   );
 }
 
 export async function getStaticProps() {
   const res = await fetch('http://localhost:3001/notes');
-  const notes = await res.json();
-  const user = {name: 'Author 1'};
+  let notes = await res.json();
   return {
     props: {
       notes,
-      user
     },
   };  
 }

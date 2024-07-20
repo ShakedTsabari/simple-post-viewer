@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
 import { useContext } from "react";
-import { ThemeContext } from "./NoteList";
+import { ThemeContext, UserContext } from "./NoteList";
+
 
 export default function Note ({ id, title, author, content, onNoteDelete, onNoteEdit, user } : any) {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(content);
     const theme = useContext(ThemeContext);
     const className = 'note-' + theme;
+    
 
     const handleDeleteClick = async () => {
         try {
@@ -38,7 +40,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
                 <small>By {author}</small>
                 <br />
                 <p>{text}</p>
-                {user && user.name === author &&
+                {user && user === author &&
                 (isEditing ? (<>
                                 <input 
                                     type="text"

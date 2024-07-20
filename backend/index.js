@@ -77,26 +77,28 @@ app.get('/notes/:id', async (req, res) => {
 
 // Create a new note
 app.post('/notes', async (req, res) => {
-    const { content } = req.body;
+    const { content , user , email } = req.body;
     console.log("server got: " + content);   
-    if (!content) {
+    if (!content || !user) {
         return res.status(400).json({ error: 'Missing fields in the request' });
     }
     const maxId = await Note.find().sort({ id: -1 }).limit(1);
     const newId = maxId[0].id + 1;
 
-    const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET) //handle error
+    console.log("req: " + req.headers.authorization);
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.SECRET)
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    const user = await User.findById(decodedToken.id)
+    //const user = await User.findById(decodedToken.id)
 
     const note = new Note({
         id: newId,
         title: "new note",
         author: {
-            name: user.name.toString(),
-            email: user.email.toString()
+            name: user.toString(),
+            email: email.toString()
         },
         content: content,
     });

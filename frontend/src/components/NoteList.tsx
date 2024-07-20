@@ -4,17 +4,23 @@ import {createContext, use, useEffect, useRef, useState } from 'react';
 import AddNote from './AddNote';
 import Note from './Note';
 import Pagination from './Pagination';
-
+import Homepage from './Homepage';
 
 export const ThemeContext = createContext<string | null>(null);
+export const UserContext = createContext<any>(null);
+export const TokenContext = createContext<any>(null);
+export const EmailContext = createContext<any>(null);
 
-export default function NoteList({posts, user}: {posts: any, user: any}) {
+export default function NoteList({posts}: {posts: any}) {
     
     const [activePage, setActivePage] = useState(1);
     const [notes, setNotes] = useState<any[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [theme, setTheme] = useState('light');
     const [cache, setCache] = useState<any>({});
+    const [user, setUser] = useState<any>(null);
+    const [token, setToken] = useState<any>(null);
+    const [email, setEmail] = useState<any>(null);
     
     const className =  'note-list-' + theme;
 
@@ -46,7 +52,9 @@ export default function NoteList({posts, user}: {posts: any, user: any}) {
                 for (let i = 0; i < range.length; i++) {
                     const page = range[i];
                     if (!cache[page]) {
-                        await axios.get(`http://localhost:3001/notes?page=${page}`).then((response) => {
+                        await axios.get(`http://localhost:3001/notes?page=${page}`, 
+                        { headers: { Authorization: `Bearer ${token}` } }
+                        ).then((response) => {
                             newCache = {...newCache, [page]: {notes: response.data.notes}};
                             }).catch((error) => {
                                 console.error('Error fetching notes:', error);
@@ -68,7 +76,9 @@ export default function NoteList({posts, user}: {posts: any, user: any}) {
             fetchNotes(activePage);
         }
         else {
-            axios.get(`http://localhost:3001/notes?page=${activePage}`).then((response) => {
+            axios.get(`http://localhost:3001/notes?page=${activePage}`,
+            { headers: { Authorization: `Bearer ${token }` } }
+            ).then((response) => {
                 const notes_number = response.data.totalNotes;
                 const pages_number = Math.ceil(notes_number / NOTES_PER_PAGE);
                 setNotes(response.data.notes);
@@ -78,7 +88,7 @@ export default function NoteList({posts, user}: {posts: any, user: any}) {
                 console.error('Error fetching notes:', error);
             });
         }
-    }, [activePage, totalPages, cache]);
+    }, [activePage, totalPages, cache, token]);
 
 
 
@@ -116,48 +126,68 @@ export default function NoteList({posts, user}: {posts: any, user: any}) {
 
     function handleEditNote(note : any) {
         setNotes(notes.map((n : any) => n.id === note.id ? note : n));
-        console.log('Note id: ', note.id);
     }
 
     const handleChangeTheme = async () => {
         theme === 'light' ? setTheme('dark') : setTheme('light');
     }
 
+    const handleLogin = async (newUser: any, newToken: any, newEmail: any) => {
+        setToken(newToken);
+        setUser(newUser);
+        setEmail(newEmail);
+    }
+
+    const handleLogout = async () => {
+        setToken(null);
+        setUser(null);
+    }
+
+    const handleSignup = async () => {
+    }
+
     return (
-        <ThemeContext.Provider value={theme}>
-        <div className={className}>
-            <div className="toggle">
-                <button name="change_theme" onClick={handleChangeTheme}>
-                toggle {theme} mode
-                </button>
-            </div>
-            <div>
-                <ul>
-                    {notes.map((note: any) => (
-                        <Note 
-                            key={note.id}
-                            id={note.id}
-                            title={note.title}
-                            author={note.author.name}
-                            content={note.content}
-                            onNoteDelete={handleNoteDelete}
-                            onNoteEdit={handleEditNote}
-                            user={user}
-                        />
-                    ))}
-                </ul>
-            </div>
-            <div>
-                <Pagination 
-                    activePage={activePage} 
-                    onPageChange={pageChange} 
-                    totalPages={totalPages} 
-                    paginationRange={paginationRange} />
-            </div>
-            <div>
-                {user && <AddNote onAddNote={handleAddNote} user={user}/>}
-            </div>
-        </div>
-        </ThemeContext.Provider>
+        <EmailContext.Provider value={email}>
+        <TokenContext.Provider value={token}>
+            <UserContext.Provider value={user}>
+                <ThemeContext.Provider value={theme}>
+                <div className={className}>
+                    <Homepage onLogin={handleLogin} onLogout={handleLogout} onSignup={handleSignup}/>
+                    <div className="toggle">
+                        <button name="change_theme" onClick={handleChangeTheme}>
+                        toggle {theme} mode
+                        </button>
+                    </div>
+                    <div>
+                        <ul>
+                            {notes.map((note: any) => (
+                                <Note 
+                                    key={note.id}
+                                    id={note.id}
+                                    title={note.title}
+                                    author={note.author.name}
+                                    content={note.content}
+                                    onNoteDelete={handleNoteDelete}
+                                    onNoteEdit={handleEditNote}
+                                    user={user}
+                                />
+                            ))}
+                        </ul>
+                    </div>
+                    <div>
+                        <Pagination 
+                            activePage={activePage} 
+                            onPageChange={pageChange} 
+                            totalPages={totalPages} 
+                            paginationRange={paginationRange} />
+                    </div>
+                    <div>
+                        {user && <AddNote onAddNote={handleAddNote}/>}
+                    </div>
+                </div>
+                </ThemeContext.Provider>
+            </UserContext.Provider>
+        </TokenContext.Provider>
+        </EmailContext.Provider>
     );
 }
