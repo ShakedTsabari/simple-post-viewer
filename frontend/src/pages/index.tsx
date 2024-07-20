@@ -2,12 +2,13 @@ import React from 'react';
 import "../styles/style.css";
 import NoteList from '../components/NoteList';
 import Link from 'next/link';
+import Homepage from '../components/homepage';
 
 
 export default function App({notes, user}:{notes: any, user: any}) {
   return (
     <div className="App">
-      <Link href="/homepage">home</Link>
+      <Homepage />
       <NoteList posts={notes} user={user}/>
     </div>
   );

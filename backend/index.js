@@ -22,6 +22,8 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(cors());
 app.use(logger);
+app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 
 //Get all notes
 mongoose.connect(process.env.MONGODB_CONNECTION_URL)
@@ -119,7 +121,7 @@ app.put('/notes/:id', async (req, res) => {
         const note = await Note.findOneAndUpdate({ id: id }, { content : content }, { new: true });
         if (!note) 
             return res.status(404).json({ error: 'Note not found' });
-        res.status(201).json({note: note});
+        res.status(200).json({note: note});
     } catch (err) {
         res.status(500).json({ error: 'Failed to update note' });
     }

@@ -1,9 +1,7 @@
-import Link from 'next/link'
- 
-export default function Login() {
+export default function Homepage() {
   return (
-    <div>
-      <div>
+    <div className="homepage">
+      <div className="createUserContainer">
         <h1>Create User</h1>
         <form name="create_user_form">
           <label>Name</label>
@@ -17,7 +15,7 @@ export default function Login() {
           <button name="create_user_form_create_user">Create User</button>
         </form>
       </div>
-          <div>
+      <div className="loginUserContainer">
           <h1>Login</h1>
           <form name="login_form">
             <label>Username</label>
@@ -26,12 +24,10 @@ export default function Login() {
             <input type="password" name="login_form_password" /><br />
             <button name="login_form_login">Login</button>
           </form>
-        </div>
-        <div>
-          <h1>Logout</h1>
-          <button name="logout">Logout</button>  {/*The logout will delete the token from the state.*/}
-
-        </div>
       </div>
+      <div className="logoutUserContainer">
+        <button name="logout">Logout</button>  {/*The logout will delete the token from the state.*/}
+      </div>
+    </div>
   )
 }
