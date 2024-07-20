@@ -1,11 +1,18 @@
 const express = require('express');
 const logger = require('./middleware/logger');
-const cors = require('cors')
+const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Note = require('./models/note');
-const User = require('./models/user');
-const bcrypt = require('bcrypt');
+const usersRouter = require('./controllers/users');
+const loginRouter = require('./controllers/login');
+
+const getTokenFrom = request => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+      return authorization.replace('Bearer ', '')
+    }
+    return null
+}
 
 dotenv.config();
 
@@ -26,46 +33,30 @@ mongoose.connect(process.env.MONGODB_CONNECTION_URL)
         process.exit(1);
     });
 
-    app.post('/users', async (req, res) => {
-        try {
-            const { name, email, username, password } = req.body;
-            
-            if (!name || !email || !username || !password) {
-                return res.status(400).json({ error: 'Missing fields in request' });
-            }
+app.use('/users', usersRouter);
+app.use('/login', loginRouter);
 
-            const passwordHash = await bcrypt.hash(password, 10);
-            const user = new User({
-                name: name,
-                email: email,
-                username: username,
-                passwordHash: passwordHash
-            });
+const jwt = require('jsonwebtoken');
+const User = require('./models/user');
+const Note = require('./models/note');
 
-            const newUser = await User.create(user);
-            res.status(201).json(newUser);
-        } catch (err) {
-            res.status(500).json({ error: 'Failed to create user' });
-        }
-    });
+app.get('/notes', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10 
+        const skipIndex = (page - 1) * limit;
 
-    app.get('/notes', async (req, res) => {
-        try {
-            const page = parseInt(req.query.page) || 1;
-            const limit = 10 
-            const skipIndex = (page - 1) * limit;
-    
-            const totalNotes = await Note.countDocuments();
-            const notes = await Note.find().sort({ id: 1 }).skip(skipIndex).limit(limit);
-    
-            res.status(200).json({
-                notes: notes,
-                totalNotes: totalNotes,
-            });
-        } catch (err) {
-            res.status(500).json({ error: 'Failed to fetch notes' });
-        }
-    });
+        const totalNotes = await Note.countDocuments();
+        const notes = await Note.find().sort({ id: 1 }).skip(skipIndex).limit(limit);
+
+        res.status(200).json({
+            notes: notes,
+            totalNotes: totalNotes,
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch notes' });
+    }
+});
 
 // Get the i'th note
 app.get('/notes/:id', async (req, res) => {
@@ -92,17 +83,21 @@ app.post('/notes', async (req, res) => {
     const maxId = await Note.find().sort({ id: -1 }).limit(1);
     const newId = maxId[0].id + 1;
 
+    const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET) //handle error
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
 
     const note = new Note({
         id: newId,
         title: "new note",
         author: {
-            name: "new author",
-            email: "new@"
+            name: user.name.toString(),
+            email: user.email.toString()
         },
         content: content,
     });
-
 
     try {
         const newNote = await Note.create(note);
@@ -144,4 +139,4 @@ app.delete('/notes/:id', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-});
+})
