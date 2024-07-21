@@ -11,36 +11,38 @@ export const UserContext = createContext<any>(null);
 export const TokenContext = createContext<any>(null);
 export const EmailContext = createContext<any>(null);
 
-export default function NoteList({posts}: {posts: any}) {
+export default function NoteList({posts, pages, firstCache}: {posts: any,pages: any, firstCache: any}) {
     
     const [activePage, setActivePage] = useState(1);
-    const [notes, setNotes] = useState<any[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
+    const [notes, setNotes] = useState<any[]>(posts);
+    const [totalPages, setTotalPages] = useState(pages);
     const [theme, setTheme] = useState('light');
-    const [cache, setCache] = useState<any>({});
+    //const [cache, setCache] = useState<any>(firstCache);
     const [user, setUser] = useState<any>(null);
     const [token, setToken] = useState<any>(null);
     const [email, setEmail] = useState<any>(null);
+    const cache = useRef<any>(firstCache);
     
     const className =  'note-list-' + theme;
 
     const NOTES_PER_PAGE = 10;
+    
 
     //build fetch and cache notes
-    useEffect(() => {
-        axios.get(`http://localhost:3001/notes?page=1`)
-            .then((response) => {
-                const notes_number = response.data.totalNotes;
-                const pages_number = Math.ceil(notes_number / NOTES_PER_PAGE);
-                setNotes(response.data.notes);
-                setTotalPages(pages_number);
+    // useEffect(() => {
+    //     axios.get(`http://localhost:3001/notes?page=1`)
+    //         .then((response) => {
+    //             const notes_number = response.data.totalNotes;
+    //             const pages_number = Math.ceil(notes_number / NOTES_PER_PAGE);
+    //             setNotes(response.data.notes);
+    //             setTotalPages(pages_number);
             
-            })
-            .catch((error) => {
-                console.error('Error fetching notes:', error);
-            });
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error fetching notes:', error);
+    //         });
 
-    }, []);
+    // }, []);
 
     //fetch notes when active page changes and update cache
     useEffect(() => {
@@ -48,10 +50,10 @@ export default function NoteList({posts}: {posts: any}) {
         const fetchNotes = async (page: number) => { 
             try {
                 const range = getPaginationRange(activePage, totalPages);
-                let newCache = {...cache};
+                let newCache = {...cache.current};
                 for (let i = 0; i < range.length; i++) {
                     const page = range[i];
-                    if (!cache[page]) {
+                    if (!cache.current[page]) {
                         await axios.get(`http://localhost:3001/notes?page=${page}`, 
                         { headers: { Authorization: `Bearer ${token}` } }
                         ).then((response) => {
@@ -61,8 +63,7 @@ export default function NoteList({posts}: {posts: any}) {
                             });
                     }
                 }
-                cache[page] = newCache[page];
-                //console.log('cache:', newCache);
+                cache.current = newCache;
             } catch (error) {
                 console.error('Error fetching notes:', error);
             }
@@ -71,8 +72,8 @@ export default function NoteList({posts}: {posts: any}) {
 
         if (totalPages === 0) 
             return;
-        if (cache[activePage]) {
-            setNotes(cache[activePage].notes);
+        if (cache.current[activePage]) {
+            setNotes(cache.current[activePage].notes);
             fetchNotes(activePage);
         }
         else {
@@ -88,7 +89,7 @@ export default function NoteList({posts}: {posts: any}) {
                 console.error('Error fetching notes:', error);
             });
         }
-    }, [activePage, totalPages, cache, token]);
+    }, [activePage, totalPages, token]);
 
 
 
