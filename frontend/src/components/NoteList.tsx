@@ -4,7 +4,7 @@ import {createContext, use, useEffect, useRef, useState } from 'react';
 import AddNote from './AddNote';
 import Note from './Note';
 import Pagination from './Pagination';
-import Homepage from './Homepage';
+import Homepage from './homepage';
 
 export const ThemeContext = createContext<string | null>(null);
 export const UserContext = createContext<any>(null);
@@ -53,8 +53,7 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
                 for (let i = 0; i < range.length; i++) {
                     const page = range[i];
                     if (!cache.current[page]) {
-                        await axios.get(`http://localhost:3001/notes?page=${page}`, 
-                        { headers: { Authorization: `Bearer ${token}` } }
+                        await axios.get(`http://localhost:3001/notes?page=${page}`
                         ).then((response) => {
                             newCache = {...newCache, [page]: {notes: response.data.notes}};
                             }).catch((error) => {
