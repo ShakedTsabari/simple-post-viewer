@@ -88,6 +88,7 @@ app.post('/notes', async (req, res) => {
     const newId = maxId[0].id + 1;
 
     const token = req.headers.authorization.split(' ')[1];
+    console.log('token: ' + token);
     const decodedToken = jwt.verify(token, process.env.SECRET)
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
@@ -129,7 +130,7 @@ app.put('/notes/:id', async (req, res) => {
     try {
         //make sure user is the author of the note
         console.log('req.headers: ' + req);
-        const token = req.headers.Authorization.split(' ')[1];
+        const token = req.headers.authorization.split(' ')[1];
         console.log('token: ' + token);
         const decodedToken = jwt.verify(token, process.env.SECRET)
         console.log('decodedToken: ' + decodedToken);
