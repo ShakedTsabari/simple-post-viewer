@@ -17,7 +17,6 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
     const [notes, setNotes] = useState<any[]>(posts);
     const [totalPages, setTotalPages] = useState(pages);
     const [theme, setTheme] = useState('light');
-    //const [cache, setCache] = useState<any>(firstCache);
     const [user, setUser] = useState<any>(null);
     const [token, setToken] = useState<any>(null);
     const [email, setEmail] = useState<any>(null);

@@ -15,7 +15,8 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
 
     const handleDeleteClick = async () => {
         try {
-            await axios.delete(`http://localhost:3001/notes/${id}`);
+            await axios.delete(`http://localhost:3001/notes/${id}`,
+                { headers: { Authorization: `Bearer ${token}` } });
             onNoteDelete(id);
         } catch (error) {
             console.error('Error deleting note:', error);
@@ -25,8 +26,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
     const handleEditClick = async () => {
         try {
             const response = await axios.put(`http://localhost:3001/notes/${id}`, { content: text},
-            { headers: { Authorization: `Bearer ${token}` } }
-            );
+            { headers: { Authorization: `Bearer ${token}` } });
             const updatedNote = response.data.note;
             setIsEditing(false);
             onNoteEdit(updatedNote);

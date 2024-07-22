@@ -1,7 +1,9 @@
-PUT http://localhost:3001/notes/129
+POST http://localhost:3001/notes
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdpbCIsImlkIjoiNjY5YmFmMTE4NjQ5MDJjNGFjMDE0ZGE2IiwiaWF0IjoxNzIxNjQxNTg4fQ.4spnJsSfuEejNOlJXoESsrlC2QBI13g7-xr8sLxEjPc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdpbCIsImlkIjoiNjY5YmFmMTE4NjQ5MDJjNGFjMDE0ZGE2IiwiaWF0IjoxNzIxNjQ1NDM2fQ.AVGfnZEX1DIys95yih6oeW9ludnlpX5b1TFmrMHX5i0
 
 {
-    "content": "Updated content4"
+    "content" : "This is a new note",
+    "user" : "gil",
+    "email" : "mail"
 }
