@@ -79,13 +79,14 @@ app.get('/notes/:id', async (req, res) => {
 app.post('/notes', async (req, res) => {
     const { content , user , email } = req.body;
     console.log("server got: " + content);   
-    if (!content || !user) {
+    if (!content || !user || !email) {
         return res.status(400).json({ error: 'Missing fields in the request' });
     }
+
+
     const maxId = await Note.find().sort({ id: -1 }).limit(1);
     const newId = maxId[0].id + 1;
 
-    console.log("req: " + req.headers.authorization);
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.SECRET)
     if (!decodedToken.id) {
@@ -115,17 +116,41 @@ app.post('/notes', async (req, res) => {
 
 // Update the i'th note
 app.put('/notes/:id', async (req, res) => {
-    const { content, id } = req.body;
+    const { content } = req.body;
+    const id = parseInt(req.params.id);
+    console.log('id: ' + id);
+
     if (!content) {
         return res.status(400).json({ error: 'Missing fields in request' });
     }
+    console.log(req.headers.authorization);
+
+
     try {
+        //make sure user is the author of the note
+        console.log('req.headers: ' + req);
+        const token = req.headers.Authorization.split(' ')[1];
+        console.log('token: ' + token);
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+        console.log('decodedToken: ' + decodedToken);
+        if (!decodedToken.id) {
+          return response.status(403).json({ error: 'token invalid' })
+        }
+        else {
+            console.log('valid token');
+        }
+
+
+        console.log('id: ' + id);
+        
         const note = await Note.findOneAndUpdate({ id: id }, { content : content }, { new: true });
+        console.log('note: ' + note);
+
         if (!note) 
             return res.status(404).json({ error: 'Note not found' });
         res.status(200).json({note: note});
     } catch (err) {
-        res.status(500).json({ error: 'Failed to update note' });
+        res.status(500).json({ error: 'Failed to update note!' });
     }
 });
 

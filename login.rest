@@ -1,7 +1,6 @@
-POST http://localhost:3001/api/login
+PUT http://localhost:3001/notes/130
 Content-Type: application/json
 
 {
-    "username": "gil",
-    "password": "1234"
+    "content": "Updated content4"
 }

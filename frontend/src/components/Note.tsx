@@ -4,11 +4,12 @@ import { useContext } from "react";
 import { ThemeContext, UserContext } from "./NoteList";
 
 
-export default function Note ({ id, title, author, content, onNoteDelete, onNoteEdit, user } : any) {
+export default function Note ({ id, title, author, content, onNoteDelete, onNoteEdit } : any) {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(content);
     const theme = useContext(ThemeContext);
     const className = 'note-' + theme;
+    const user = useContext(UserContext);
     
 
     const handleDeleteClick = async () => {
@@ -22,7 +23,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
 
     const handleEditClick = async () => {
         try {
-            const response = await axios.put(`http://localhost:3001/notes/${id}`, { content: text, id: id });
+            const response = await axios.put(`http://localhost:3001/notes/${id}`, { content: text});
             const updatedNote = response.data.note;
             setIsEditing(false);
             onNoteEdit(updatedNote);

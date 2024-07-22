@@ -8,7 +8,7 @@ usersRouter.post('/', async (req, res) => {
         const { name, email, username, password } = req.body;
         
         if (!name || !email || !username || !password) {
-            return res.status(400).json({ error: 'Missing fields in request' });
+            return res.status(401).json({ error: 'Missing fields in request' });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);

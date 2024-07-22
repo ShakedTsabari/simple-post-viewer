@@ -170,7 +170,6 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
                                     content={note.content}
                                     onNoteDelete={handleNoteDelete}
                                     onNoteEdit={handleEditNote}
-                                    user={user}
                                 />
                             ))}
                         </ul>
