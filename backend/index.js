@@ -78,7 +78,6 @@ app.get('/notes/:id', async (req, res) => {
 // Create a new note
 app.post('/notes', async (req, res) => {
     const { content , user , email } = req.body;
-    console.log("server got: " + content);   
     if (!content || !user || !email) {
         return res.status(400).json({ error: 'Missing fields in the request' });
     }
@@ -118,6 +117,8 @@ app.post('/notes', async (req, res) => {
 // Update the i'th note
 app.put('/notes/:id', async (req, res) => {
     const { content } = req.body;
+    console.log("server got: " + req.json);   
+
     const id = parseInt(req.params.id);
     console.log('id: ' + id);
 

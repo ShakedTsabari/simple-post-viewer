@@ -1,5 +1,6 @@
 PUT http://localhost:3001/notes/129
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdpbCIsImlkIjoiNjY5YmFmMTE4NjQ5MDJjNGFjMDE0ZGE2IiwiaWF0IjoxNzIxNjQxNTg4fQ.4spnJsSfuEejNOlJXoESsrlC2QBI13g7-xr8sLxEjPc
 
 {
     "content": "Updated content4"
