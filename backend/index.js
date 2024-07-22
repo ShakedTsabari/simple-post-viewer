@@ -27,7 +27,6 @@ app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter);
 
-const blacklist = [];
 
 //Get all notes
 mongoose.connect(process.env.MONGODB_CONNECTION_URL)
