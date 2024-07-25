@@ -110,22 +110,35 @@ app.post('/notes', async (req, res) => {
 // Update the i'th note
 app.put('/notes/:id', async (req, res) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ error: 'Token missing or invalid' });
-        }
-        const decodedToken = jwt.verify(token, process.env.SECRET)
-        if (!decodedToken.id) {
-        return response.status(403).json({ error: 'Forbidden user' })
-        }
         const { content } = req.body;
         const id = parseInt(req.params.id);
+
+        const token = req.headers.authorization.split(' ')[1];
+        if (!token )   {
+            return res.status(401).json({ error: 'missing token' });
+        }
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+            if (!decodedToken.id) {
+        return response.status(403).json({ error: 'token invalid' })
+        }
+
+        const note1 = await Note.findOne({ id: id });
+        authorUser = await User.findOne({ email: note1.author.email });
+        if (!authorUser) {
+            return res.status(404).json({ error: 'Author not found' });
+        }
+        
+        if (authorUser._id.toString() !== decodedToken.id) {
+            return res.status(403).json({ error: 'Unauthorized to edit note' });
+        }
+
         if (!content) {
             return res.status(400).json({ error: 'Missing fields in request' });
         }
         const note = await Note.findOneAndUpdate({ id: id }, { content : content }, { new: true });
         if (!note) 
-        return res.status(404).json({ error: 'Note not found' });
+            return res.status(404).json({ error: 'Note not found' });
+
         res.status(200).json({note: note});
     } catch (err) {
         res.status(500).json({ error: 'Failed to update note!' });
