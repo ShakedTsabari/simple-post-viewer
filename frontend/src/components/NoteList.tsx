@@ -18,34 +18,17 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
     const [totalPages, setTotalPages] = useState(pages);
     const [theme, setTheme] = useState('light');
     const [user, setUser] = useState<any>(null);
-    const [token, setToken] = useState<any>(null);
-    const [email, setEmail] = useState<any>(null);
+    //const [token, setToken] = useState<any>(null);
     const cache = useRef<any>(firstCache);
     
     const className =  'note-list-' + theme;
 
     const NOTES_PER_PAGE = 10;
     
-
-    //build fetch and cache notes
-    // useEffect(() => {
-    //     axios.get(`http://localhost:3001/notes?page=1`)
-    //         .then((response) => {
-    //             const notes_number = response.data.totalNotes;
-    //             const pages_number = Math.ceil(notes_number / NOTES_PER_PAGE);
-    //             setNotes(response.data.notes);
-    //             setTotalPages(pages_number);
-            
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error fetching notes:', error);
-    //         });
-
-    // }, []);
-
     //fetch notes when active page changes and update cache
     useEffect(() => {
         //async function to fetch notes
+        let active = true;
         const fetchNotes = async (page: number) => { 
             try {
                 const range = getPaginationRange(activePage, totalPages);
@@ -53,8 +36,7 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
                 for (let i = 0; i < range.length; i++) {
                     const page = range[i];
                     if (!cache.current[page]) {
-                        await axios.get(`http://localhost:3001/notes?page=${page}`, 
-                        { headers: { Authorization: `Bearer ${token}` } }
+                        await axios.get(`http://localhost:3001/notes?page=${page}` 
                         ).then((response) => {
                             newCache = {...newCache, [page]: {notes: response.data.notes}};
                             }).catch((error) => {
@@ -69,15 +51,15 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
         }
 
 
-        if (totalPages === 0) 
-            return;
+        if (totalPages === 0) {
+            return () => { active = false; };
+        }
         if (cache.current[activePage]) {
             setNotes(cache.current[activePage].notes);
             fetchNotes(activePage);
         }
         else {
-            axios.get(`http://localhost:3001/notes?page=${activePage}`,
-            { headers: { Authorization: `Bearer ${token }` } }
+            axios.get(`http://localhost:3001/notes?page=${activePage}`
             ).then((response) => {
                 const notes_number = response.data.totalNotes;
                 const pages_number = Math.ceil(notes_number / NOTES_PER_PAGE);
@@ -88,7 +70,8 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
                 console.error('Error fetching notes:', error);
             });
         }
-    }, [activePage, totalPages, token]);
+        return () => { active = false; };
+    }, [activePage, totalPages, user]);
 
 
 
@@ -132,14 +115,11 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
         theme === 'light' ? setTheme('dark') : setTheme('light');
     }
 
-    const handleLogin = async (newUser: any, newToken: any, newEmail: any) => {
-        setToken(newToken);
-        setUser(newUser);
-        setEmail(newEmail);
+    const handleLogin = async (newName: any, newToken: any, newEmail: any) => {
+        setUser({name: newName, email: newEmail, token: newToken});
     }
 
     const handleLogout = async () => {
-        setToken(null);
         setUser(null);
     }
 
@@ -147,8 +127,6 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
     }
 
     return (
-        <EmailContext.Provider value={email}>
-        <TokenContext.Provider value={token}>
             <UserContext.Provider value={user}>
                 <ThemeContext.Provider value={theme}>
                 <div className={className}>
@@ -186,7 +164,5 @@ export default function NoteList({posts, pages, firstCache}: {posts: any,pages: 
                 </div>
                 </ThemeContext.Provider>
             </UserContext.Provider>
-        </TokenContext.Provider>
-        </EmailContext.Provider>
     );
 }

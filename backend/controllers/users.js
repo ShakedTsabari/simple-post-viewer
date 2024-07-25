@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const usersRouter = require('express').Router()
 
 usersRouter.post('/', async (req, res) => {
-    console.log('Request body:', req.body); // Log the request body
         try {
         const { name, email, username, password } = req.body;
         
@@ -22,7 +21,6 @@ usersRouter.post('/', async (req, res) => {
         const newUser = await user.save();
         res.status(201).json(newUser);
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: 'Failed to create user' });
     }
 });

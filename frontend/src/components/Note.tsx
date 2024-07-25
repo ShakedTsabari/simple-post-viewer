@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useContext } from "react";
-import { ThemeContext, UserContext, TokenContext } from "./NoteList";
+import { ThemeContext, UserContext } from "./NoteList";
 
 
 export default function Note ({ id, title, author, content, onNoteDelete, onNoteEdit } : any) {
@@ -10,13 +10,11 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
     const theme = useContext(ThemeContext);
     const className = 'note-' + theme;
     const user = useContext(UserContext);
-    const token = useContext(TokenContext);
-    
 
     const handleDeleteClick = async () => {
         try {
             await axios.delete(`http://localhost:3001/notes/${id}`,
-                { headers: { Authorization: `Bearer ${token}` } });
+                { headers: { Authorization: `Bearer ${user.token}` } });
             onNoteDelete(id);
         } catch (error) {
             console.error('Error deleting note:', error);
@@ -26,7 +24,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
     const handleEditClick = async () => {
         try {
             const response = await axios.put(`http://localhost:3001/notes/${id}`, { content: text},
-            { headers: { Authorization: `Bearer ${token}` } });
+            { headers: { Authorization: `Bearer ${user.token}` } });
             const updatedNote = response.data.note;
             setIsEditing(false);
             onNoteEdit(updatedNote);
@@ -44,7 +42,7 @@ export default function Note ({ id, title, author, content, onNoteDelete, onNote
                 <small>By {author}</small>
                 <br />
                 <p>{text}</p>
-                {user && user === author &&
+                {user && user.name === author &&
                 (isEditing ? (<>
                                 <input 
                                     type="text"

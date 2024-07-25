@@ -1,5 +1,5 @@
 
-import { useState, useContext} from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 
@@ -11,16 +11,16 @@ export default function Signup ({onSignup} : {onSignup : any}) {
 
     const handleSignup = async (event : any) => {    
         event.preventDefault();    
-        try {
-            const response = await axios.post(`http://localhost:3001/users`,
-                 { name : name, email : email, username : username, password : password });
-            setName('');
-            setEmail('');
-            setUsername('');
-            setPassword('');
-        } catch (error) {
-            console.error(error);
-        }
+        await axios.post(`http://localhost:3001/users`,{ name : name, email : email, username : username, password : password })
+            .then(() => {
+                setName('');
+                setEmail('');
+                setUsername('');
+                setPassword('');
+            })
+            .catch((error) => {
+                console.error('Error signing up:', error);
+            });
     }
 
 

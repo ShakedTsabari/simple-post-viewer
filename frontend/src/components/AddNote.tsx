@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState, useContext } from 'react';
-import { UserContext , TokenContext , EmailContext } from './NoteList';
+import { UserContext } from './NoteList';
 
 
 
@@ -8,8 +8,6 @@ export default function AddNote ({onAddNote} : {onAddNote: any}) {
     const [content, setContent] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const user = useContext(UserContext);
-    const token = useContext(TokenContext);
-    const email = useContext(EmailContext);
 
     const handleCancel = () => {
         setContent('');
@@ -17,16 +15,16 @@ export default function AddNote ({onAddNote} : {onAddNote: any}) {
     }
 
     const handleAddNote = async () => {
-        try {
-            const response = await axios.post(`http://localhost:3001/notes`, { content : content, user : user, email : email},
-            { headers: { Authorization: `Bearer ${token}` } }
-            );
+        const response = await axios.post(`http://localhost:3001/notes`, { content : content, name : user.name, email : user.email},
+        { headers: { Authorization: `Bearer ${user.token}` } }
+        ).then((response) => {
             const note = response.data.note;
             onAddNote(note);
             setContent('');
-        } catch (error) {
+            setIsAdding(false);
+        }).catch((error) => {
             console.error('Error adding note:', error);
-        }
+        });
     };
 
     return (

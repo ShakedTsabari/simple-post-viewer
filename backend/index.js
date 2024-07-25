@@ -28,7 +28,6 @@ app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter);
 
 
-//Get all notes
 mongoose.connect(process.env.MONGODB_CONNECTION_URL)
     .then(() => {
         console.log('Connected to MongoDB');
@@ -37,6 +36,7 @@ mongoose.connect(process.env.MONGODB_CONNECTION_URL)
         console.error('Failed to connect to MongoDB', err);
         process.exit(1);
     });
+
 
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
@@ -82,30 +82,27 @@ app.get('/notes/:id', async (req, res) => {
 // Create a new note
 app.post('/notes', async (req, res) => {
     try {
-
+        if (!req.headers.authorization || !req.headers.authorization === 'Bearer null'){
+            return res.status(401).json({ error: 'missing token' });
+        }
         const token = req.headers.authorization.split(' ')[1];
-        console.log('token:', token);
         const decodedToken = jwt.verify(token, process.env.SECRET);
-        console.log('decoded token:', decodedToken);
         if (!decodedToken.id) {
-            console.log('token invalid');
             return response.status(401).json({ error: 'token invalid' })
         }
 
-        const { content , user , email } = req.body;
-        if (!content || !user || !email) {
-            console.log('missing fields in request');
+        const { content , name , email } = req.body;
+        if (!content || !name || !email) {
             return res.status(400).json({ error: 'Missing fields in the request' });
         }
 
         const maxId = await Note.find().sort({ id: -1 }).limit(1);
         const newId = maxId[0].id + 1;
-        console.log('new id', newId);
         const note = new Note({
             id: newId,
             title: "new note",
             author: {
-                name: user.toString(),
+                name: name.toString(),
                 email: email.toString()
             },
             content: content,
@@ -115,7 +112,6 @@ app.post('/notes', async (req, res) => {
         res.status(200).json({note: newNote});
 
     } catch (err) {
-        console.log('failed to insert note');
         res.status(500).json({ error: 'Failed to create note' });
     }
 });

@@ -6,19 +6,21 @@ export default function Login ({onLogin} : {onLogin : any}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-
     const handleLogin = async (event : any) => {
         event.preventDefault();
-        try {
-            const response = await axios.post(`http://localhost:3001/login`,
-                 { username : username, password : password },);
-            const user = response.data.username;
-            const token = response.data.Authorization;
-            const email = response.data.email;
-            onLogin(user, token, email);
-        } catch (error) {
-            console.error(error);
-        }
+        const response = await axios.post(`http://localhost:3001/login`,
+                 { username : username, password : password },)
+            .then((response) => {
+                const user = response.data.username;
+                const token = response.data.Authorization;
+                const email = response.data.email;
+                onLogin(user, token, email);
+                setUsername('');
+                setPassword('');
+            })
+            .catch((error) => {
+                console.error('Error logging in:', error);
+            });
     };
 
 

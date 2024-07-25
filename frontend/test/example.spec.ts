@@ -6,20 +6,22 @@ import { test, expect } from '@playwright/test';
 //     await expect(page.locator('.note')).not.toBeNull();
 // })
 
-test('navigate to the home page', async ({ page }) => {
+test('add a new user is not logging in', async ({ page }) => {
     await page.goto('http://localhost:3000/')
-    await page.click('text=home')
-    await expect(page).toHaveURL('http://localhost:3000/homepage')
-    await expect(page.locator('h1')).toContainText('home')
-  })
+    await page.click('text=Login')
+    await page.fill('input[name="create_user_form_name"]', 'NewName');
+    await page.fill('input[name="create_user_form_email"]', 'NewUser');
+    await page.fill('input[name="create_user_form_username"]', 'NewUser');
+    await page.fill('input[name="create_user_form_password"]', '1234');
+    await page.click('button[name="create_user_form_create_user"]');
+    await expect(page.locator('.login_form_login')).not.toBeNull();
+});
 
-test('add a new note', async ({ page }) => {
+test('there is no add a new note button for unsigned user', async ({ page }) => {
     await page.goto('http://localhost:3000/')
-    await page.click('text=Add New Note')
-    await page.fill('input[name="text_input_new_note"]', 'New note')
-    await page.click('button[name="text_input_save_new_note"]')
-    await page.waitForSelector('ul')
-    await expect(page.locator('ul')).toContainText('New note')
+    const addNoteButton = await page.locator('.add_new_note');
+    await expect(addNoteButton).toHaveCount(0);
+
 })
 
 test('return 404 for invalid note ID', async ({ page }) => {

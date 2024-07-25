@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import "../styles/style.css";
 import NoteList from '../components/NoteList';
 import Link from 'next/link';
@@ -8,9 +8,9 @@ import axios from 'axios';
 
 export default function App({notes, pages, firstCache}:{notes: any, pages: any, firstCache: any}) {
   return (
-    <div className="App">
-      <NoteList posts={notes} pages={pages} firstCache={firstCache}/>
-    </div>
+      <div className="App">
+        <NoteList posts={notes} pages={pages} firstCache={firstCache}/>
+      </div>
   );
 }
 
