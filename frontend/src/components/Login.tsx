@@ -8,7 +8,7 @@ export default function Login ({onLogin} : {onLogin : any}) {
 
     const handleLogin = async (event : any) => {
         event.preventDefault();
-        const response = await axios.post(`http://localhost:3001/login`,
+        await axios.post(`http://localhost:3001/login`,
                  { username : username, password : password },)
             .then((response) => {
                 const user = response.data.username;
