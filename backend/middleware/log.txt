@@ -43338,3 +43338,87 @@
     Path: /notes
     Body: {}
     ---
+
+    Time: Thu Jul 25 2024 20:27:55 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes/999
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 20:58:41 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes/999
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:44 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:45 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:46 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:47 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:47 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:47 GMT+0300 (Israel Daylight Time)
+    Method: POST
+    Path: /users
+    Body: {"name":"NewName","email":"NewUser","username":"NewUser","password":"1234"}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:47 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:49 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes/999
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:49 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:50 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:50 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
+
+    Time: Thu Jul 25 2024 21:00:51 GMT+0300 (Israel Daylight Time)
+    Method: GET
+    Path: /notes
+    Body: {}
+    ---
