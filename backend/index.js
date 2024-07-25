@@ -102,7 +102,7 @@ app.post('/notes', async (req, res) => {
         });
 
         const newNote = await Note.create(note);
-        res.status(200).json({note: newNote});
+        res.status(201).json({note: newNote});
 
     } catch (err) {
         res.status(500).json({ error: 'Failed to create note' });
