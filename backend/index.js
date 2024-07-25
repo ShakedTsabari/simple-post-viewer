@@ -74,19 +74,23 @@ app.get('/notes/:id', async (req, res) => {
 app.post('/notes', async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ error: 'Token missing or invalid' });
-        }
-        const decodedToken = jwt.verify(token, process.env.SECRET);
-        if (!decodedToken.id) {
-            return response.status(403).json({ error: 'Forbidden user' })
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+        if (!token || !decodedToken.id)   {
+            return res.status(401).json({ error: 'Token missing or invalid.' });
         }
 
         const { content , name , email } = req.body;
-        console.log(content, name, email);
         if (!content || !name || !email) {
-            console.log(content, name, email);
             return res.status(400).json({ error: 'Missing fields in the request' });
+        }
+
+        const loggedInUser = await User.findById(decodedToken.id);
+        if (!loggedInUser) {
+            return res.status(401).json({ error: 'Unauthorized user' });
+        }
+
+        if (loggedInUser.name !== name || loggedInUser.email !== email) {
+            return res.status(403).json({ error: 'Forbidden user' });
         }
 
         const maxId = await Note.find().sort({ id: -1 }).limit(1);
@@ -117,32 +121,38 @@ app.put('/notes/:id', async (req, res) => {
         const id = parseInt(req.params.id);
 
         const token = req.headers.authorization.split(' ')[1];
-        if (!token )   {
-            return res.status(401).json({ error: 'missing token' });
-        }
         const decodedToken = jwt.verify(token, process.env.SECRET)
-            if (!decodedToken.id) {
-        return response.status(403).json({ error: 'token invalid' })
+        if (!token || !decodedToken.id)   {
+            return res.status(401).json({ error: 'Token missing or invalid.' });
         }
 
-        const note1 = await Note.findOne({ id: id });
-        authorUser = await User.findOne({ _id: decodedToken.id });
-        if (!authorUser) {
-            return res.status(404).json({ error: 'Author not found' });
-        }
+        // const note1 = await Note.findOne({ id: id });
+        // authorUser = await User.findOne({ _id: decodedToken.id });
+        // if (!authorUser) {
+        //     return res.status(404).json({ error: 'Author not found' });
+        // }
         
-        if (authorUser._id.toString() !== decodedToken.id) {
-            return res.status(403).json({ error: 'Unauthorized to edit note' });
-        }
+        // if (authorUser._id.toString() !== decodedToken.id) {
+        //     return res.status(403).json({ error: 'Unauthorized to edit note' });
+        // }
 
         if (!content) {
             return res.status(400).json({ error: 'Missing fields in request' });
         }
-        const note = await Note.findOneAndUpdate({ id: id }, { content : content }, { new: true });
-        if (!note) 
-            return res.status(404).json({ error: 'Note not found' });
 
-        res.status(200).json({note: note});
+        const note = await Note.findOne({ id: id });
+        if (!note) {
+            return res.status(404).json({ error: 'Note not found' });
+        }
+
+        if (note.author.name !== decodedToken.username) {
+            return res.status(403).json({ error: 'Forbidden user' });
+        }
+        const Updatednote = await Note.findOneAndUpdate({ id: id }, { content : content }, { new: true });
+        // if (!Updatednote) 
+        //     return res.status(404).json({ error: 'Note not found' });
+
+        res.status(200).json({note: Updatednote});
     } catch (err) {
         res.status(500).json({ error: 'Failed to update note!' });
     }
@@ -152,16 +162,23 @@ app.put('/notes/:id', async (req, res) => {
 app.delete('/notes/:id', async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ error: 'Token missing or invalid' });
-        }
         const decodedToken = jwt.verify(token, process.env.SECRET)
-        if (!decodedToken.id) {
-            return response.status(403).json({ error: 'Forbidden user' })
+        if (!token || !decodedToken.id)   {
+            return res.status(401).json({ error: 'Token missing or invalid.' });
         }
-        const note = await Note.findOneAndDelete({ id: req.params.id });
-        if (!note) 
+        // const note = await Note.findOneAndDelete({ id: req.params.id });
+        // if (!note) 
+        //     return res.status(404).json({ error: 'Note not found' });
+        const note = await Note.findOne({ id: req.params.id });
+        if (!note) {
             return res.status(404).json({ error: 'Note not found' });
+        }
+
+        if (note.author.name !== decodedToken.username) {
+            return res.status(403).json({ error: 'Forbidden user' });
+        }
+
+        await Note.findOneAndDelete({ id: req.params.id });
         res.status(204).end();
     } catch (err) {
         res.status(500).json({ error: 'Failed to delete note' });
