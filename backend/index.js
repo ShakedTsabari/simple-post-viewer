@@ -6,15 +6,6 @@ const dotenv = require('dotenv');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
 const logoutRouter = require('./controllers/logout');
-
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-      return authorization.replace('Bearer ', '')
-    }
-    return null
-}
-
 dotenv.config();
 
 const app = express();
@@ -28,6 +19,7 @@ app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter);
 
 
+//Get all notes
 mongoose.connect(process.env.MONGODB_CONNECTION_URL)
     .then(() => {
         console.log('Connected to MongoDB');
@@ -37,13 +29,11 @@ mongoose.connect(process.env.MONGODB_CONNECTION_URL)
         process.exit(1);
     });
 
-
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 
 const jwt = require('jsonwebtoken');
-const User = require('./models/user');
 const Note = require('./models/note');
 
 app.get('/notes', async (req, res) => {
@@ -75,34 +65,35 @@ app.get('/notes/:id', async (req, res) => {
 
         res.status(200).json(note);
     } catch (err) {
-        res.status(404).json({ error: 'Failed to fetch note' });
+        res.status(500).json({ error: 'Failed to fetch note' });
     }
 });
 
 // Create a new note
 app.post('/notes', async (req, res) => {
     try {
-        if (!req.headers.authorization || !req.headers.authorization === 'Bearer null'){
-            return res.status(401).json({ error: 'missing token' });
-        }
         const token = req.headers.authorization.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ error: 'Token missing or invalid' });
+        }
         const decodedToken = jwt.verify(token, process.env.SECRET);
         if (!decodedToken.id) {
-            return response.status(401).json({ error: 'token invalid' })
+            return response.status(403).json({ error: 'Forbidden user' })
         }
 
-        const { content , name , email } = req.body;
-        if (!content || !name || !email) {
+        const { content , user , email } = req.body;
+        if (!content || !user || !email) {
             return res.status(400).json({ error: 'Missing fields in the request' });
         }
 
         const maxId = await Note.find().sort({ id: -1 }).limit(1);
         const newId = maxId[0].id + 1;
+
         const note = new Note({
             id: newId,
             title: "new note",
             author: {
-                name: name.toString(),
+                name: user.toString(),
                 email: email.toString()
             },
             content: content,
@@ -158,9 +149,12 @@ app.put('/notes/:id', async (req, res) => {
 app.delete('/notes/:id', async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ error: 'Token missing or invalid' });
+        }
         const decodedToken = jwt.verify(token, process.env.SECRET)
         if (!decodedToken.id) {
-          return response.status(403).json({ error: 'token invalid' })
+            return response.status(403).json({ error: 'Forbidden user' })
         }
         const note = await Note.findOneAndDelete({ id: req.params.id });
         if (!note) 
