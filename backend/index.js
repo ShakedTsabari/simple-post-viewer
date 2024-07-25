@@ -81,8 +81,10 @@ app.post('/notes', async (req, res) => {
             return response.status(403).json({ error: 'Forbidden user' })
         }
 
-        const { content , user , email } = req.body;
-        if (!content || !user || !email) {
+        const { content , name , email } = req.body;
+        console.log(content, name, email);
+        if (!content || !name || !email) {
+            console.log(content, name, email);
             return res.status(400).json({ error: 'Missing fields in the request' });
         }
 
@@ -93,7 +95,7 @@ app.post('/notes', async (req, res) => {
             id: newId,
             title: "new note",
             author: {
-                name: user.toString(),
+                name: name.toString(),
                 email: email.toString()
             },
             content: content,
