@@ -4,7 +4,7 @@ import {createContext, use, useEffect, useRef, useState } from 'react';
 import AddNote from './AddNote';
 import Note from './Note';
 import Pagination from './Pagination';
-import Homepage from './homepage';
+import Homepage from './Homepage';
 
 export const ThemeContext = createContext<string | null>(null);
 export const UserContext = createContext<any>(null);
