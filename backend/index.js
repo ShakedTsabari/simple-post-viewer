@@ -35,6 +35,7 @@ app.use('/logout', logoutRouter);
 
 const jwt = require('jsonwebtoken');
 const Note = require('./models/note');
+const User = require('./models/user');
 
 app.get('/notes', async (req, res) => {
     try {
@@ -125,7 +126,7 @@ app.put('/notes/:id', async (req, res) => {
         }
 
         const note1 = await Note.findOne({ id: id });
-        authorUser = await User.findOne({ email: note1.author.email });
+        authorUser = await User.findOne({ _id: decodedToken.id });
         if (!authorUser) {
             return res.status(404).json({ error: 'Author not found' });
         }
