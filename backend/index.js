@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(cors());
 app.use(logger);
-app.use('/api/users', usersRouter);
-app.use('/api/login', loginRouter);
-app.use('/api/logout', logoutRouter);
+app.use('/users', usersRouter);
+app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
 
 
 //Get all notes
@@ -28,10 +28,6 @@ mongoose.connect(process.env.MONGODB_CONNECTION_URL)
         console.error('Failed to connect to MongoDB', err);
         process.exit(1);
     });
-
-app.use('/users', usersRouter);
-app.use('/login', loginRouter);
-app.use('/logout', logoutRouter);
 
 const jwt = require('jsonwebtoken');
 const Note = require('./models/note');
@@ -75,6 +71,7 @@ app.post('/notes', async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET)
+    
         if (!token || !decodedToken.id)   {
             return res.status(401).json({ error: 'Token missing or invalid.' });
         }
@@ -89,7 +86,7 @@ app.post('/notes', async (req, res) => {
             return res.status(401).json({ error: 'Unauthorized user' });
         }
 
-        if (loggedInUser.name !== name || loggedInUser.email !== email) {
+        if (loggedInUser.username !== name || loggedInUser.email !== email) {
             return res.status(403).json({ error: 'Forbidden user' });
         }
 

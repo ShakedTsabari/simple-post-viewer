@@ -15,9 +15,10 @@ export default function AddNote ({onAddNote} : {onAddNote: any}) {
     }
 
     const handleAddNote = async () => {
-        const response = await axios.post(`http://localhost:3001/notes`, { content : content, name : user.name, email : user.email},
+        await axios.post(`http://localhost:3001/notes`, { content : content, name : user.name, email : user.email},
         { headers: { Authorization: `Bearer ${user.token}` } }
         ).then((response) => {
+            console.log('User:', user); // Check if user.name, user.email, and user.token are correct
             const note = response.data.note;
             onAddNote(note);
             setContent('');
